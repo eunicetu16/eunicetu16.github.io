@@ -74,12 +74,12 @@
 							<h2>
 								<a href="https://vizhub.com/eunicetu16/85f513bbbe634e87b430238a0c3704e6">Bar Chart with D3</a>
 							</h2>
-								<p>Comparing differnt inherited type with average worth in billions.</p>
+								<p>Comparing different inherited types with average worth in billions.</p>
 
 							<h2>
 								<a href="https://vizhub.com/eunicetu16/c243adf3a40c4052883d96fdaa410083">Heatmap with tooltip in D3</a>
 							</h2>
-								<p>Heatmap with tooltip that displays the wealth worth that grouped by region and wealth type.</p>
+								<p>Heatmap with a tooltip that displays the wealth worth grouped by region and wealth type.</p>
 									
 							</div>
 						</section>
@@ -256,133 +256,27 @@
 							</div>
 						</section>
 						</section>
-						<section class="spotlight">
-							<div class="image"><img src="images/CNN.jpg" alt="" /></div><div class="content">
+						
+                    <section class="spotlight">
+							<div id="d3Container" alt="" /></div>
+							<div>
+
 							<h2>
-								<a href="https://pcur.princeton.edu/2022/10/a-figure-speaks-a-thousand-words/">Black Hat</a>
+								<a href="https://vizhub.com/eunicetu16/bd21527f05c94713ac22d76735d85614">White Hat</a>	
 							</h2>
-								<p>The graph from CNN depicting the number of Democrats, Republicans, and Independent voter who belived that Terry Schiabo should have her feeding tube removed in 2005. This court agreement by political party by percentage is misleading, as it appears to show three times as much support from Democrats compared to Republicans. However, upon closer examination, it's evident that the vertical axis scale starts at 50%, masking the slight 8% difference where slightly more Democrats supported the decision than Republicans.</p>
+								<p>The redesign graph has helpful title and labels that describe and contextualize the visualization. The baseline from zero on the y-axis to show that threr isn't much difference between Democratic and Republican opnion. </p>
 							</h2>
 							</div>
 						</section>
-					</section>
-					<section>
-						 <head>
-    <style>
-      .bar {
-        fill: steelblue;
-      }
-    </style>
-    <meta charset="utf-8" />
-    <title>Black and White Hat Bar Chart</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-  </head>
-  <body>
-    <script>
-      const data = [
-        { party: 'Democrats', percent: 62 },
-        { party: 'Republicans', percent: 54 },
-        { party: 'Independents', percent: 54 },
-      ];
+						</section>
+						<!-- D3 Visualization Section -->
+                    <section id="d3Visualization" class="spotlight">
+ 
+                         <div class="image">
+                            <div id="d3Container"></div>
 
-      const svgWidth = 800;
-      const svgHeight = 500;
-      const margin = {
-        top: 50,
-        right: 30,
-        bottom: 70,
-        left: 50,
-      };
-      const width = svgWidth - margin.left - margin.right;
-      const height = svgHeight - margin.top - margin.bottom;
-
-      // Append the svg
-      const svg = d3
-        .select('body')
-        .append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-        .attr(
-          'transform',
-          `translate(${margin.left},${margin.top})`,
-        );
-
-      svg
-        .append('text')
-        .attr('x', 30)
-        .attr('y', -25)
-        .attr('font-size', '24px')
-        .text('Court Agreement by Political Party');
-
-      // Subtitle of graph
-      svg
-        .append('text')
-        .attr('x', 30)
-        .attr('y', -5)
-        .style('font-size', '15px')
-        .style('fill', 'grey')
-        .text('Percentage Breakdown');
-
-      svg
-        .append('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', -height / 2 - 50)
-        .attr('y', -35)
-        .style('font-size', '15px')
-        .text('Agree Percentage %');
-
-      svg
-        .append('text')
-        .attr('x', width / 2 - 40)
-        .attr('y', height + 50)
-        .style('font-size', '15px')
-        .text('Political Party');
-
-      // Convert string values to numbers
-      data.forEach(function (d) {
-        d.percent = +d.percent;
-      });
-
-      // Define X and Y scales
-      const xScale = d3
-        .scaleBand()
-        .domain(data.map((d) => d.party))
-        .range([0, width])
-        .padding(0.1);
-
-      const yScale = d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.percent)])
-        .nice()
-        .range([height, 0]);
-
-      // Add X and Y axes
-      svg
-        .append('g')
-        .attr('class', 'axis axis-x')
-        .attr('transform', `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
-
-      svg
-        .append('g')
-        .attr('class', 'axis axis-y')
-        .call(d3.axisLeft(yScale).ticks(10));
-
-      // Add bars
-      svg
-        .selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('rect')
-        .attr('class', 'bar')
-        .attr('x', (d) => xScale(d.party))
-        .attr('y', (d) => yScale(d.percent))
-        .attr('width', xScale.bandwidth())
-        .attr('height', (d) => height - yScale(d.percent));
-    </script>
-  </body>
-</section>
+                        </div> 
+                    </section>
 				<!-- Footer -->
 					<footer id="footer">
 						<ul class="icons">
@@ -407,6 +301,114 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="https://d3js.org/d3.v7.min.js"></script>
+			<script>
+                const data = [
+                    { party: 'Democrats', percent: 62 },
+                    { party: 'Republicans', percent: 54 },
+                    { party: 'Independents', percent: 54 },
+                ];
+
+                const svgWidth = 800;
+                const svgHeight = 500;
+                const margin = {
+                    top: 50,
+                    right: 30,
+                    bottom: 70,
+                    left: 50,
+                };
+                const width = svgWidth - margin.left - margin.right;
+                const height = svgHeight - margin.top - margin.bottom;
+
+                // Append the svg
+                const svg = d3
+                    .select('#d3Container')
+                    .append('svg')
+                    .attr('width', width + margin.left + margin.right)
+                    .attr('height', height + margin.top + margin.bottom)
+                    .append('g')
+                    .attr(
+                        'transform',
+                        `translate(${margin.left},${margin.top})`,
+                    );
+
+                svg
+                    .append('text')
+                    .attr('x', 30)
+                    .attr('y', -25)
+                    .attr('font-size', '24px')
+                    .style('fill', 'white')
+                    .text('Court Agreement by Political Party');
+
+                // Subtitle of graph
+                svg
+                    .append('text')
+                    .attr('x', 30)
+                    .attr('y', -5)
+                    .style('font-size', '15px')
+                    .style('fill', 'lightgray')
+                    .text('Percentage Breakdown');
+
+                svg
+                    .append('text')
+                    .attr('transform', 'rotate(-90)')
+                    .attr('x', -height / 2 - 50)
+                    .attr('y', -35)
+                    .style('font-size', '15px')
+                    .style('fill', 'white')
+                    .text('Agree Percentage %');
+
+                svg
+                    .append('text')
+                    .attr('x', width / 2 - 40)
+                    .attr('y', height + 50)
+                    .style('font-size', '15px')
+                    .style('fill', 'white')
+                    .text('Political Party');
+
+                // Convert string values to numbers
+                data.forEach(function (d) {
+                    d.percent = +d.percent;
+                });
+
+                // Define X and Y scales
+                const xScale = d3
+                    .scaleBand()
+                    .domain(data.map((d) => d.party))
+                    .range([0, width])
+                    .padding(0.1);
+
+                const yScale = d3
+                    .scaleLinear()
+                    .domain([0, d3.max(data, (d) => d.percent)])
+                    .nice()
+                    .range([height, 0]);
+
+                // Add X and Y axes
+                svg
+                    .append('g')
+                    .attr('class', 'axis axis-x')
+                    .attr('transform', `translate(0, ${height})`)
+                    .call(d3.axisBottom(xScale));
+
+                svg
+                    .append('g')
+                    .attr('class', 'axis axis-y')
+                    .call(d3.axisLeft(yScale).ticks(10));
+
+                // Add bars
+                svg
+                    .selectAll('.bar')
+                    .data(data)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar')
+                    .attr('x', (d) => xScale(d.party))
+                    .attr('y', (d) => yScale(d.percent))
+                    .attr('width', xScale.bandwidth())
+                    .attr('height', (d) => height - yScale(d.percent))
+                    .attr('fill', 'steelblue');
+            </script>
 
 	</body>
 </html>
