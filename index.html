@@ -286,6 +286,230 @@
 
                         </div> 
                     </section>
+					
+
+					<!-- eight -->
+					<section>
+					<section id="one" class="wrapper style1 special">
+						<div class="inner">
+							<header class="major">
+								<h2>Interaction - Multi-Series Line Chart<br />
+								</h2>
+								<p>Filtering: the ability to click on the city text to filter (remove) that line. Specifically, clicking on a city name should remove (or make invisible) the line for that city. Clicking the text again should add (or make visible) the line for that city.</p> <br/>
+								<p>Brushing: the ability to hover on the city text to brush that line. Specifically, hovering on a city name should bring that line to the front, and color all other lines in a light gray color. Un-hovering the text should restore the lines to their original colors.</p><br/>
+								<p>Zoom and Pan: the ability to pan and zoom using the mouse.</p> 
+							</header>
+						</div>
+					</section>
+					</section>
+					<style>
+
+.axis--x path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+<svg width="1500" height="500"></svg>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+
+var inter = d3.select("svg"),
+    intermargin = {top: 20, right: 80, bottom: 30, left: 50},
+    interwidth = inter.attr("width") - intermargin.left - intermargin.right,
+    interheight = inter.attr("height") - intermargin.top - intermargin.bottom,
+    interg = inter.append("g").attr("transform", "translate(" + intermargin.left + "," + intermargin.top + ")");
+
+var parseTime = d3.timeParse("%Y%m%d");
+
+var x = d3.scaleTime().range([0, interwidth - intermargin.right]),
+    y = d3.scaleLinear().range([interheight, 0]),
+    z = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+const makeLine = (xScale) => d3.line()
+	.curve(d3.curveBasis)
+	.x(function(d) { return xScale(d.date); })
+    .y(function(d) { return y(d.temperature); });
+
+var line = d3.line()
+    .curve(d3.curveBasis)
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.temperature); });
+
+d3.tsv("https://gist.githubusercontent.com/eunicetu16/aa1a444c19fe7db6377dcc82887aa7ab/raw/2aa013f7f48c353ce24c1f85f24751e1c789cb29/data.tsv", function(d) {
+	return d;
+}).then(function(data) {
+
+	  let columns = ['date', 'New York', 'San Francisco', 'Austin']
+	  for (d of data) {
+		  d.date = parseTime(d.date);
+  	      for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
+	  }
+
+	  var cities = data.columns.slice(1).map(function(id) {
+	    return {
+	      id: id,
+	      values: data.map(function(d) {
+	        return {date: d.date, temperature: d[id]};
+	      })
+	    };
+	  });
+
+	  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+	  y.domain([
+	    d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
+	    d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.temperature; }); })
+	  ]);
+
+	  z.domain(cities.map(function(c) { return c.id; }));
+
+	  const x_axis = interg.append("g")
+	      .attr("class", "axis axis--x")
+	      .attr("id", 'x_axis')
+	      .attr("transform", "translate(0," + interheight + ")")
+	      .call(d3.axisBottom(x));
+
+	  interg.append("g")
+	      .attr("class", "axis axis--y")
+	      .call(d3.axisLeft(y))
+	    .append("text")
+	      .attr("transform", "rotate(-90)")
+	      .attr("y", 6)
+	      .attr("dy", "0.71em")
+	      .attr("fill", "white")
+	      .text("Temperature, ºF");
+
+	  var city = interg.selectAll(".city")
+	    .data(cities)
+	    .enter().append("svg")
+	      .attr("class", "city")
+		  .attr("width", interwidth - intermargin.right);
+
+
+	  function hover(elem) {
+	     // Add code here for 'hover' 
+	  	var attrs = elem.srcElement.attributes;
+	  	let id = attrs['data-id'].value;
+	  	let path = city.select('#' + id);
+	  	if (path.attr('visibility') == 'hidden') {
+	  		return;
+	  	}
+	  	city.selectAll('.line').style('stroke', d => {
+	  		//let target_id = d.id.substring(0, 3).toUpperCase();
+	  		if (d.id.substring(0, 3).toUpperCase() == id) {
+	  			return z(d.id)
+	  		}else {
+	  			return '#a3a3a3'
+	  		}
+	  	});
+	  }
+
+
+	  function exit(elem) {
+	     var attrs = elem.srcElement.attributes;
+	     let id = attrs['data-id'].value;
+	     let path = city.select('#' + id);
+	     if (path.attr('visibility') == 'hidden') {
+	  		return;
+	     }
+	     city.selectAll('.line').style('stroke', d => {
+	  		return z(d.id)
+	     });
+	  }
+
+	  function click(elem) {
+	    // Add code here for 'click' 
+	    var attrs = elem.srcElement.attributes;
+	    let id = attrs['data-id'].value;
+	    let path = city.select('#' + id);
+	    let visibility = path.attr('visibility');
+	    if (visibility == 'visible') {
+	    	path.attr('visibility', 'hidden');
+	    	city.selectAll('.line').style('stroke', d => {
+	    		return z(d.id)
+	    	});
+	    }else {
+	    	path.attr('visibility', 'visible');
+	    	city.selectAll('.line').style('stroke', d => {
+	    		if (d.id.substring(0, 3).toUpperCase() == id) {
+	    			return z(d.id)
+	    		}else {
+	    			return '#a3a3a3'
+	    		}
+	    	});
+	    }
+	}
+
+	  const xAxis = (interg, x) => interg
+	      .attr("transform", `translate(0,${interheight})`)
+	      .call(d3.axisBottom(x).ticks(interwidth / 80).tickSizeOuter(0))
+
+	  function zoomed(event) {
+		// Add code here for zooming 
+		const xzoom = event.transform.rescaleX(x);
+		city.selectAll('.line').attr('d', function(d) {
+			return makeLine(xzoom)(d.values);
+		})
+		x_axis.call(xAxis, xzoom);
+	  }
+
+	  const zoom = d3.zoom()
+	      .scaleExtent([1, 5])
+	      .extent([[intermargin.left, 0], [interwidth - intermargin.right, interheight]])
+	      .translateExtent([[intermargin.left, -Infinity], [interwidth - intermargin.right, Infinity]])
+	      .on("zoom", zoomed);
+
+	  inter.call(zoom)
+	    .transition()
+	      .duration(100)
+	      .call(zoom.scaleTo, 1, [x(Date.UTC(2012, 1, 1)), 0]);
+
+
+
+	  city.append("path")
+	      .attr("class", "line")
+	      .attr("d", function(d) { return line(d.values); })
+		  .attr("id", d => d.id.substring(0, 3).toUpperCase())
+		  .attr("data-id", d => d.id.substring(0, 3).toUpperCase())
+		  .attr("visibility", "visible")
+	      .style("stroke", function(d) { return z(d.id); })
+		  .on("mouseout", exit);
+
+	  inter.selectAll(".label")
+		  .data(cities)
+		  .enter()
+          .append("text")
+	      .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
+		  .attr("class", "label")
+	      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+	      .attr("x", 55)
+		  .attr("y", 15)
+	      .attr("dy", "0.35em")
+		  .attr("data-id", d => d.id.substring(0, 3).toUpperCase())
+	      .style("font", "10px sans-serif")
+	      .style('fill', 'white')
+	      .text(function(d) { return d.id; })
+	      .on("click", click)
+	      .on("mouseover", hover)
+		  .on("mouseout", exit)
+		  
+		  
+
+});
+
+</script>
+
+
+
+
+
 				<!-- Footer -->
 					<footer id="footer">
 						<ul class="icons">
@@ -418,6 +642,7 @@
                     .attr('height', (d) => height - yScale(d.percent))
                     .attr('fill', 'steelblue');
             </script>
+
 
 	</body>
 </html>
